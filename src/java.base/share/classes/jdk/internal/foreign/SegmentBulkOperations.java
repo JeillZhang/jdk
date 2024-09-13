@@ -29,6 +29,7 @@ import jdk.internal.misc.ScopedMemoryAccess;
 import jdk.internal.util.Architecture;
 import jdk.internal.util.ArraysSupport;
 import jdk.internal.vm.annotation.ForceInline;
+import sun.security.action.GetIntegerAction;
 
 import java.lang.foreign.MemorySegment;
 
@@ -309,7 +310,7 @@ public final class SegmentBulkOperations {
 
     // The returned value is in the interval [0, 2^30]
     static int powerOfPropertyOr(String name, int defaultPower) {
-        final int power = Integer.getInteger(PROPERTY_PATH + name, defaultPower);
+        final int power = GetIntegerAction.privilegedGetProperty(PROPERTY_PATH + name, defaultPower);
         return 1 << Math.clamp(power, 0, Integer.SIZE - 2);
     }
 
