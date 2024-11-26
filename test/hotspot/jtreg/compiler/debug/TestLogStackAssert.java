@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2024, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,24 +21,19 @@
  * questions.
  */
 
-import java.security.URIParameter;
-import javax.security.auth.login.*;
-import com.sun.security.auth.login.*;
+package compiler.debug;
 
-public class GetInstanceConfigSpi extends ConfigurationSpi {
+/*
+ * @test
+ * @bug 8344013
+ * @requires vm.debug == true & vm.compiler2.enabled
+ * @summary Verify the xmlStream log stack is not left in a bad state
+ * @run main/othervm -XX:+LogCompilation -XX:CompileCommand=log,*.* -XX:+CITimeVerbose -Xcomp compiler.debug.TestLogStackAssert
+ */
+public class TestLogStackAssert {
 
-    private Configuration c;
-
-    public GetInstanceConfigSpi(final Configuration.Parameters params) {
-
-        if (params instanceof URIParameter uriParam) {
-            c = new ConfigFile(uriParam.getURI());
-        } else {
-            c = new ConfigFile();
-        }
+    public static void main(String[] args) throws Exception {
+        System.out.println("Test passed!");
     }
 
-    public AppConfigurationEntry[] engineGetAppConfigurationEntry(String name) {
-        return c.getAppConfigurationEntry(name);
-    }
 }
