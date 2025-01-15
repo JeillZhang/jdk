@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,26 +19,31 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
- *
  */
 
-#include "precompiled.hpp"
-#include "gc/parallel/parallelInitLogger.hpp"
-#include "gc/shared/genArguments.hpp"
-#include "gc/shared/gcLogPrecious.hpp"
+/*
+ * @test
+ * @bug 8342550
+ * @summary Three-letter time zone IDs should output a deprecated warning
+ *          message.
+ * @library /test/lib
+ * @build jdk.test.lib.process.ProcessTools
+ * @run main ThreeLetterZoneID
+ */
+import java.util.TimeZone;
+import jdk.test.lib.process.ProcessTools;
 
-void ParallelInitLogger::print_heap() {
-  log_info_p(gc, init)("Alignments:"
-                       " Space %zu%s,"
-                       " Generation %zu%s,"
-                       " Heap %zu%s",
-                       byte_size_in_exact_unit(SpaceAlignment), exact_unit_for_byte_size(SpaceAlignment),
-                       byte_size_in_exact_unit(GenAlignment), exact_unit_for_byte_size(GenAlignment),
-                       byte_size_in_exact_unit(HeapAlignment), exact_unit_for_byte_size(HeapAlignment));
-  GCInitLogger::print_heap();
-}
+public class ThreeLetterZoneID {
+    public static void main(String... args) throws Exception {
+        if (args.length > 0) {
+            TimeZone.getTimeZone("PST");
+        } else {
+            checkWarningMessage();
+        }
+    }
 
-void ParallelInitLogger::print() {
-  ParallelInitLogger init_log;
-  init_log.print_all();
+    public static void checkWarningMessage() throws Exception {
+        ProcessTools.executeTestJava("ThreeLetterZoneID", "dummy")
+            .shouldContain("Use of the three-letter time zone ID \"PST\" is deprecated and it will be removed in a future release");
+    }
 }
