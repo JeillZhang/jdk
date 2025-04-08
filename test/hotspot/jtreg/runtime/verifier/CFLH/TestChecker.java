@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,23 +19,23 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
- *
  */
 
-#ifndef SHARE_JFR_SUPPORT_JFRKLASSUNLOADING_HPP
-#define SHARE_JFR_SUPPORT_JFRKLASSUNLOADING_HPP
+package checker;
 
-#include "jfr/utilities/jfrTypes.hpp"
-#include "memory/allStatic.hpp"
+public interface TestChecker {
+    void check(Integer i);
 
-class Klass;
+    static TestChecker instance() {
+        return TestCheckerImpl.instance;
+    }
 
-class JfrKlassUnloading : AllStatic {
- public:
-  static bool on_unload(const Klass* k);
-  static int64_t event_class_count();
-  static bool is_unloaded(traceid klass_id, bool previous_epoch = false);
-  static void clear();
-};
+    class TestCheckerImpl implements TestChecker {
+        private static final TestCheckerImpl instance = new TestCheckerImpl();
 
-#endif // SHARE_JFR_SUPPORT_JFRKLASSUNLOADING_HPP
+        @Override
+        public void check(Integer i) {
+            System.out.println("Checking: " + i);
+        }
+    }
+}

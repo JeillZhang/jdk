@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,23 +19,36 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
- *
  */
 
-#ifndef SHARE_JFR_SUPPORT_JFRKLASSUNLOADING_HPP
-#define SHARE_JFR_SUPPORT_JFRKLASSUNLOADING_HPP
+/*
+ * @test
+ * @bug 8340321
+ * @summary Disable SHA-1 in TLS/DTLS 1.2 signatures.
+ *          This test only covers DTLS 1.2.
+ * @library /javax/net/ssl/templates
+ *          /test/lib
+ * @run main/othervm DisableSHA1inHandshakeSignatureDTLS12
+ */
 
-#include "jfr/utilities/jfrTypes.hpp"
-#include "memory/allStatic.hpp"
+public class DisableSHA1inHandshakeSignatureDTLS12 extends
+        DisableSHA1inHandshakeSignatureTLS12 {
 
-class Klass;
+    protected DisableSHA1inHandshakeSignatureDTLS12() throws Exception {
+        super();
+    }
 
-class JfrKlassUnloading : AllStatic {
- public:
-  static bool on_unload(const Klass* k);
-  static int64_t event_class_count();
-  static bool is_unloaded(traceid klass_id, bool previous_epoch = false);
-  static void clear();
-};
+    public static void main(String[] args) throws Exception {
+        new DisableSHA1inHandshakeSignatureDTLS12().run();
+    }
 
-#endif // SHARE_JFR_SUPPORT_JFRKLASSUNLOADING_HPP
+    @Override
+    protected String getProtocol() {
+        return "DTLSv1.2";
+    }
+
+    // No CertificateRequest in DTLS server flight.
+    @Override
+    protected void checkCertificateRequest() {
+    }
+}
