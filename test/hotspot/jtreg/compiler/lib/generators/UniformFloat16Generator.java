@@ -1,12 +1,10 @@
 /*
- * Copyright (c) 2008, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
+ * published by the Free Software Foundation.
  *
  * This code is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -23,14 +21,31 @@
  * questions.
  */
 
-package com.sun.tools.classfile;
+package compiler.lib.generators;
 
-/*
- *  <p><b>This is NOT part of any supported API.
- *  If you write code that depends on this, you do so at your own risk.
- *  This code and its internal interfaces are subject to change or
- *  deletion without notice.</b>
+import static java.lang.Float.*;
+
+/**
+ * Provides a uniform float16 distribution random generator, in the provided range [lo, hi).
  */
-public class DescriptorException extends Exception {
-    private static final long serialVersionUID = 2411890273788901032L;
+final class UniformFloat16Generator extends UniformIntersectionRestrictableGenerator<Short> {
+    /**
+     * Creates a new {@link UniformFloat16Generator}.
+     *
+     * @param lo Lower bound of the range (inclusive).
+     * @param hi Higher bound of the range (exclusive).
+     */
+    public UniformFloat16Generator(Generators g, Short lo, Short hi) {
+        super(g, lo, hi);
+    }
+
+    @Override
+    public Short next() {
+        return g.random.nextFloat16(lo(), hi());
+    }
+
+    @Override
+    protected RestrictableGenerator<Short> doRestrictionFromIntersection(Short lo, Short hi) {
+        return new UniformFloat16Generator(g, lo, hi);
+    }
 }
