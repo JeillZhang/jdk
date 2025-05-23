@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2023, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,21 +22,24 @@
  *
  */
 
-#include "gc/shared/gc_globals.hpp"
-#include "gc/shared/partialArraySplitter.hpp"
-#include "gc/shared/partialArrayState.hpp"
-#include "utilities/macros.hpp"
+// A class to be loaded by a custom class loader. It has a loop. AOT
+// optimizations may be applied to this loop.
+public class CustyWithLoop {
+    volatile static int cnt;
 
-PartialArraySplitter::PartialArraySplitter(PartialArrayStateManager* manager,
-                                           uint num_workers,
-                                           size_t chunk_size)
-  : _allocator(manager),
-    _stepper(num_workers, chunk_size)
-    TASKQUEUE_STATS_ONLY(COMMA _stats())
-{}
-
-#if TASKQUEUE_STATS
-PartialArrayTaskStats* PartialArraySplitter::stats() {
-  return &_stats;
+    @Override
+    public boolean equals(Object other) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < 20) {
+            cnt += 2;
+            for (int i = 0; i < 1000; i++) {
+                int n = cnt - 2;
+                if (n < 2) {
+                    n = 2;
+                }
+                cnt += (i + cnt) % n + cnt % 2;
+            }
+        }
+        return (cnt % 17) == 8;
+    }
 }
-#endif // TASKQUEUE_STATS

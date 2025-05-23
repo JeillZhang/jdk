@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,24 +19,44 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
- *
  */
 
-#include "gc/shared/gc_globals.hpp"
-#include "gc/shared/partialArraySplitter.hpp"
-#include "gc/shared/partialArrayState.hpp"
-#include "utilities/macros.hpp"
+/*
+ * @test
+ * @bug 8343580
+ * @summary Type error with inner classes of generic classes in functions generic by outer
+ * @compile T8343580.java
+ */
 
-PartialArraySplitter::PartialArraySplitter(PartialArrayStateManager* manager,
-                                           uint num_workers,
-                                           size_t chunk_size)
-  : _allocator(manager),
-    _stepper(num_workers, chunk_size)
-    TASKQUEUE_STATS_ONLY(COMMA _stats())
-{}
+class T8343580 {
+   static abstract class Getters<T> {
+      abstract class Getter {
+         abstract T get();
+      }
+   }
 
-#if TASKQUEUE_STATS
-PartialArrayTaskStats* PartialArraySplitter::stats() {
-  return &_stats;
+   static class Usage1<T, G extends Getters<T>> {
+      public T test(G.Getter getter) {
+         return getter.get();
+      }
+   }
+
+   static class Usage2<T, U extends Getters<T>, G extends U> {
+      public T test(G.Getter getter) {
+         return getter.get();
+      }
+   }
+
+   static class Usage3<T, U extends T, G extends Getters<T>> {
+      public T test(G.Getter getter) {
+         return getter.get();
+      }
+   }
+
+   class G2<K> extends Getters<K> {}
+   static class Usage4<M, L extends G2<M>> {
+      M test(L.Getter getter) {
+         return getter.get();
+      }
+   }
 }
-#endif // TASKQUEUE_STATS
