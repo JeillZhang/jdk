@@ -1,5 +1,5 @@
 /*
- * Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+ * Copyright (c) 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,29 +19,14 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
- *
  */
 
-#ifndef SHARE_GC_SHENANDOAH_HEURISTICS_SHENANDOAHSPACEINFO_HPP
-#define SHARE_GC_SHENANDOAH_HEURISTICS_SHENANDOAHSPACEINFO_HPP
+package java.lang;
 
-#include "utilities/globalDefinitions.hpp"
+public class Object {
+    public Object() {
+        foo(); // valid, not in early constructor context
+    }
 
-/*
- * The purpose of this interface is to decouple the heuristics from a
- * direct dependency on the ShenandoahHeap singleton instance. This is
- * done to facilitate future unit testing of the heuristics and to support
- * future operational modes of Shenandoah in which the heap may be split
- * into generations.
- */
-class ShenandoahSpaceInfo {
-public:
-  virtual const char* name() const = 0;
-  virtual size_t max_capacity() const = 0;
-  virtual size_t soft_available() const = 0;
-  virtual size_t available() const = 0;
-  virtual size_t used() const = 0;
-  virtual size_t bytes_allocated_since_gc_start() const = 0;
-};
-
-#endif //SHARE_GC_SHENANDOAH_HEURISTICS_SHENANDOAHSPACEINFO_HPP
+    void foo() { }
+}
