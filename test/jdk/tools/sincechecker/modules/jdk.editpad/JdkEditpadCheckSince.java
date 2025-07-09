@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -20,9 +20,11 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-/**
- * Package that defines the interface between a Java application that wants to install code and the
- * runtime. The runtime provides in implementation of the {@link jdk.vm.ci.code.CodeCacheProvider}
- * interface. The method {@link jdk.vm.ci.code.CodeCacheProvider#addCode} can be used to install code.
+
+/*
+ * @test
+ * @bug 8346884
+ * @summary Test for `@since` in jdk.editpad module
+ * @library /test/lib /test/jdk/tools/sincechecker
+ * @run main SinceChecker jdk.editpad
  */
-package jdk.vm.ci.code;
