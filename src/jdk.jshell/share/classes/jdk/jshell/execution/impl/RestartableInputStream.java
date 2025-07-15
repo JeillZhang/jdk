@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,51 +22,28 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+package jdk.jshell.execution.impl;
 
-#ifndef _AWT_GRAPHICSENV_H_
-#define _AWT_GRAPHICSENV_H_
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-#include <jni_util.h>
+public class RestartableInputStream extends FilterInputStream {
 
-#ifndef HEADLESS
-#define MITSHM
-#endif /* !HEADLESS */
+    private final AtomicBoolean closed = new AtomicBoolean();
 
-#define UNSET_MITSHM (-2)
-#define NOEXT_MITSHM (-1)
-#define CANT_USE_MITSHM (0)
-#define CAN_USE_MITSHM (1)
+    public RestartableInputStream(InputStream delegate) {
+        super(delegate);
+    }
 
-#ifdef MITSHM
+    @Override
+    public void close() throws IOException {
+        closed.set(true);
+        super.close();
+    }
 
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <X11/extensions/XShm.h>
-#ifndef X_ShmAttach
-#include <X11/Xmd.h>
-#include <X11/extensions/shmproto.h>
-#endif
-
-#define MITSHM_PERM_COMMON (0666)
-#define MITSHM_PERM_OWNER  (0600)
-
-void TryInitMITShm(JNIEnv *env, jint *shmExt, jint *shmPixmaps);
-void resetXShmAttachFailed();
-jboolean isXShmAttachFailed();
-
-#endif /* MITSHM */
-
-/* fieldIDs for X11GraphicsConfig fields that may be accessed from C */
-struct X11GraphicsConfigIDs {
-    jfieldID aData;
-    jfieldID bitsPerPixel;
-};
-
-#define MAX_DISPLAY_MODES 256
-typedef struct {
-    unsigned int width;
-    unsigned int height;
-    jint refresh;
-} DisplayMode;
-
-#endif /* _AWT_GRAPHICSENV_H_ */
+    public boolean isClosed() {
+        return closed.get();
+    }
+}
