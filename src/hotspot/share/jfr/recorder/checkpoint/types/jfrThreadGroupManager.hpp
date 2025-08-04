@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2016, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,27 +22,27 @@
  *
  */
 
-#ifndef SHARE_CLASSFILE_DEFAULTMETHODS_HPP
-#define SHARE_CLASSFILE_DEFAULTMETHODS_HPP
+#ifndef SHARE_JFR_RECORDER_CHECKPOINT_TYPES_JFRTHREADGROUPMANAGER_HPP
+#define SHARE_JFR_RECORDER_CHECKPOINT_TYPES_JFRTHREADGROUPMANAGER_HPP
 
-#include "runtime/handles.hpp"
-#include "utilities/exceptions.hpp"
-#include "utilities/growableArray.hpp"
+#include "jfr/utilities/jfrTypes.hpp"
+#include "memory/allStatic.hpp"
 
-class InstanceKlass;
-class Symbol;
-class Method;
+class JfrCheckpointWriter;
 
-class DefaultMethods : AllStatic {
+class JfrThreadGroupManager : public AllStatic {
+  friend class JfrRecorder;
+
+ private:
+  static bool create();
+  static void destroy();
+
  public:
+  static void serialize(JfrCheckpointWriter& w);
+  static void serialize(JfrCheckpointWriter& w, traceid tgid, bool is_blob);
 
-  // Analyzes class and determines which default methods are inherited
-  // from interfaces (and has no other implementation).  For each method
-  // (and each different signature the method could have), create an
-  // "overpass" method that is an instance method that redirects to the
-  // default method.  Overpass methods are added to the methods lists for
-  // the class.
-  static void generate_default_methods(
-      InstanceKlass* klass, const GrowableArray<Method*>* mirandas, TRAPS);
+  static traceid thread_group_id(JavaThread* thread);
+  static traceid thread_group_id(const JavaThread* thread, Thread* current);
 };
-#endif // SHARE_CLASSFILE_DEFAULTMETHODS_HPP
+
+#endif // SHARE_JFR_RECORDER_CHECKPOINT_TYPES_JFRTHREADGROUPMANAGER_HPP
