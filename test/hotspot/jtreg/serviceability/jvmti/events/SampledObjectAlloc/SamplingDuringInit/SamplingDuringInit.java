@@ -21,43 +21,26 @@
  * questions.
  */
 
-super class IllegalAccessInCatch
-    version 52:0
-{
-    /*
-      static int test() {
-        try {
-          return 1 / 0;
-        } catch (jdk.internal.agent.AgentConfigurationError e1) {
-          try {
-            return 0;
-          } catch (IllegalAccessError e2) {
-            return 1;
-          }
+/**
+ * @test
+ * @bug 8372039
+ * @summary The test verifies that object allocation sampling is disabled during AOT.
+ *
+ * Don't remove 'modules' line, it triggers the crash.
+ * @modules java.management
+ *
+ * @run main/othervm/native -agentlib:SamplingDuringInit SamplingDuringInit
+ * @run main/othervm/native -agentlib:SamplingDuringInit -XX:-UseCompressedOops SamplingDuringInit
+ */
+
+public class SamplingDuringInit {
+
+    public static Object[] tmp = new Object[1000];
+    public static void main(String[] args) throws Exception {
+        // Allocate some objects to trigger Sampling even if
+        // all JDK classes are preloaded.
+        for (int i = 0; i < tmp.length; i++) {
+            tmp[i] = new String("tmp" + i);
         }
-      }
-    */
-    static Method test:"()I"
-    stack 2 locals 1
-  {
-    iconst_1;
-    iconst_0;
-    try t0;
-    idiv;
-    endtry t0;
-    ireturn;
-    catch t0 java/lang/IllegalAccessError;
-    catch t0 jdk/internal/agent/AgentConfigurationError; // loadable but not accessible from unnamed module
-    stack_frame_type full;
-    stack_map class java/lang/Throwable;
-    try t1;
-    iconst_0;
-    ireturn;
-    endtry t1;
-    catch t1 java/lang/IllegalAccessError;
-    stack_frame_type full;
-    stack_map class java/lang/Throwable;
-    iconst_1;
-    ireturn;
-  }
+    }
 }
