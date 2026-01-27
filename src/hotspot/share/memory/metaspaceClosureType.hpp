@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, 2026, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,31 +19,28 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
+ *
  */
 
-#ifndef SHARE_GC_Z_ZNMETHODTABLEITERATION_HPP
-#define SHARE_GC_Z_ZNMETHODTABLEITERATION_HPP
+#ifndef SHARE_MEMORY_METASPACECLOSURETYPE_HPP
+#define SHARE_MEMORY_METASPACECLOSURETYPE_HPP
 
-#include "gc/z/zGlobals.hpp"
-#include "runtime/atomic.hpp"
+#include "memory/allocation.hpp"
 
-class NMethodClosure;
-class ZNMethodTableEntry;
+// MetaspaceClosure is able to iterate on MetaspaceObjs, plus the following classes
+#define METASPACE_CLOSURE_TYPES_DO(f) \
+  METASPACE_OBJ_TYPES_DO(f) \
+  f(CArray) \
+  f(GrowableArray) \
+  f(ModuleEntry) \
+  f(PackageEntry) \
 
-class ZNMethodTableIteration {
-private:
-  ZNMethodTableEntry*           _table;
-  size_t                        _size;
-  ZCACHE_ALIGNED Atomic<size_t> _claimed;
+#define METASPACE_CLOSURE_TYPE_DECLARE(name) name ## Type,
 
-  bool in_progress() const;
-
-public:
-  ZNMethodTableIteration();
-
-  void nmethods_do_begin(ZNMethodTableEntry* table, size_t size);
-  void nmethods_do_end();
-  void nmethods_do(NMethodClosure* cl);
+enum class MetaspaceClosureType : int {
+  METASPACE_CLOSURE_TYPES_DO(METASPACE_CLOSURE_TYPE_DECLARE)
+  _number_of_types
 };
 
-#endif // SHARE_GC_Z_ZNMETHODTABLEITERATION_HPP
+
+#endif // SHARE_MEMORY_METASPACECLOSURETYPE_HPP

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, 2026, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,31 +19,19 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
+ *
  */
 
-#ifndef SHARE_GC_Z_ZNMETHODTABLEITERATION_HPP
-#define SHARE_GC_Z_ZNMETHODTABLEITERATION_HPP
+#ifndef SHARE_CDS_AOTGROWABLEARRAY_INLINE_HPP
+#define SHARE_CDS_AOTGROWABLEARRAY_INLINE_HPP
 
-#include "gc/z/zGlobals.hpp"
-#include "runtime/atomic.hpp"
+#include "cds/aotGrowableArray.hpp"
 
-class NMethodClosure;
-class ZNMethodTableEntry;
+#include "memory/metaspaceClosure.hpp"
 
-class ZNMethodTableIteration {
-private:
-  ZNMethodTableEntry*           _table;
-  size_t                        _size;
-  ZCACHE_ALIGNED Atomic<size_t> _claimed;
+template <typename E>
+void AOTGrowableArray<E>::metaspace_pointers_do(MetaspaceClosure* it) {
+  it->push_c_array(AOTGrowableArray<E>::data_addr(), AOTGrowableArray<E>::capacity());
+}
 
-  bool in_progress() const;
-
-public:
-  ZNMethodTableIteration();
-
-  void nmethods_do_begin(ZNMethodTableEntry* table, size_t size);
-  void nmethods_do_end();
-  void nmethods_do(NMethodClosure* cl);
-};
-
-#endif // SHARE_GC_Z_ZNMETHODTABLEITERATION_HPP
+#endif // SHARE_CDS_AOTGROWABLEARRAY_INLINE_HPP
