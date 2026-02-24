@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,19 +21,35 @@
  * questions.
  */
 
-package gc.g1;
+package compiler.lib.ir_framework.driver.network.testvm.java;
 
-/*
- * @test TestRegionAlignment.java
- * @bug 8013791
- * @requires vm.gc.G1
- * @summary Make sure that G1 ergonomics pick a heap size that is aligned with the region size
- * @comment When G1 ergonomically picks a maximum heap size it must be aligned to the region size.
- *          This test tries to get the VM to pick a small and unaligned heap size (by using MaxRAM=555) and a
- *          large region size (by using -XX:G1HeapRegionSize=32m). This will fail without the fix for 8013791.
- * @run main/othervm -XX:+UseG1GC -XX:G1HeapRegionSize=32m -Xmx140m gc.g1.TestRegionAlignment
+import compiler.lib.ir_framework.test.network.MessageTag;
+
+import java.util.List;
+
+/**
+ * Class to collect all Java Messages sent with tag {@link MessageTag#TEST_LIST}. These are only generated when the
+ * user runs with {@code -DTest=myTest} and represent the executed tests.
  */
+class ExecutedTests implements JavaMessage {
+    private final List<String> tests;
 
-public class TestRegionAlignment {
-    public static void main(String[] args) { }
+    public ExecutedTests(List<String> tests) {
+        this.tests = tests;
+    }
+
+    @Override
+    public void print() {
+        if (tests.isEmpty()) {
+            return;
+        }
+
+        System.out.println();
+        System.out.println("Executed Subset of Tests");
+        System.out.println("------------------------");
+        for (String test : tests) {
+            System.out.println("- " + test);
+        }
+        System.out.println();
+    }
 }
