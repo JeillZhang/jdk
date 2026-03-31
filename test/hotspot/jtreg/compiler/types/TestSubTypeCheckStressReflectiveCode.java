@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2026, Oracle and/or its affiliates. All rights reserved.
+ * Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,32 +21,22 @@
  * questions.
  */
 
-package sax;
-
-import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLReaderFactory;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-
-/*
+/**
  * @test
- * @bug 6925410
- * @library /javax/xml/jaxp/libs /javax/xml/jaxp/unittest
- * @run junit/othervm sax.Bug6925410Test
- * @summary Test XMLReaderFactory can createXMLReader repeatedly.
+ * @bug 8374497
+ * @summary SubTypeCheckNode::verify fails when StressReflectiveCode skips
+ *          static_subtype_check in verify() but not in sub()
+ * @run main/othervm -Xcomp -XX:CompileCommand=compileonly,*TimeZone::*
+ *                   -XX:+IgnoreUnrecognizedVMOptions -XX:+StressReflectiveCode
+ *                   ${test.main.class}
  */
-public class Bug6925410Test {
 
-    @Test
-    public void test() throws DatatypeConfigurationException, SAXException {
-        int times = 100;
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < times; i++) {
-            XMLReaderFactory.createXMLReader();
-        }
-        long end = System.currentTimeMillis();
-        double speed = ((end - start));
-        System.out.println(speed + "ms");
+package compiler.types;
+
+import java.util.TimeZone;
+
+public class TestSubTypeCheckStressReflectiveCode {
+    public static void main(String[] args) {
+        TimeZone.getDefault();
     }
 }
