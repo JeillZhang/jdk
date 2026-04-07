@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, 2026, Oracle and/or its affiliates. All rights reserved.
+ * Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,32 +19,10 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
- */
-
-/*
- * @test
- * @bug 8030783
- * @summary Regression test for 8026478
- * @library /test/lib
- * @modules java.base/jdk.internal.misc
- *          java.management
  *
- * @run driver compiler.debug.VerifyAdapterSharing
  */
 
-package compiler.debug;
+#include "runtime/icache.hpp"
+#include "utilities/globalDefinitions.hpp"
 
-import jdk.test.lib.process.OutputAnalyzer;
-import jdk.test.lib.process.ProcessTools;
-
-public class VerifyAdapterSharing {
-    public static void main(String[] args) throws Exception {
-        ProcessBuilder pb;
-        OutputAnalyzer out;
-
-        pb = ProcessTools.createTestJavaProcessBuilder("-Xcomp", "-XX:+IgnoreUnrecognizedVMOptions",
-                "-XX:+VerifyAdapterSharing", "-version");
-        out = new OutputAnalyzer(pb.start());
-        out.shouldHaveExitValue(0);
-    }
-}
+NOT_PRODUCT(THREAD_LOCAL AArch64ICacheInvalidationContext* AArch64ICacheInvalidationContext::_current_context = nullptr;)
