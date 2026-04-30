@@ -21,44 +21,32 @@
  * questions.
  */
 
-/**
- * @test
- * @summary Test jdk.internal.vm.ThreadSnapshot.of(Thread) when thread is not alive
- * @modules java.base/jdk.internal.vm
- * @run junit ThreadNotAlive
- */
+package nsk.jdwp.Invalid;
 
-import jdk.internal.vm.ThreadSnapshot;
+import java.io.*;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import nsk.share.*;
+import nsk.share.jpda.*;
+import nsk.share.jdwp.*;
 
-class ThreadNotAlive {
+public class invalid001a {
 
-    @Test
-    void unstartedPlatformThread() {
-        Thread t = Thread.ofPlatform().unstarted(() -> { });
-        assertFalse(ThreadSnapshot.of(t) != null);
+    public static void main(String args[]) {
+        invalid001a _invalid001a = new invalid001a();
+        System.exit(invalid001.JCK_STATUS_BASE + _invalid001a.runIt(args, System.err));
     }
 
-    @Test
-    void terminatedPlatformThread() throws InterruptedException {
-        Thread t = Thread.ofPlatform().start(() -> { });
-        t.join();
-        assertFalse(ThreadSnapshot.of(t) != null);
+    public int runIt(String args[], PrintStream out) {
+        ArgumentHandler argumentHandler = new ArgumentHandler(args);
+        Log log = new Log(out, argumentHandler);
+        log.display("Creating pipe");
+        IOPipe pipe = argumentHandler.createDebugeeIOPipe(log);
+        log.display("Sending command: " + "ready");
+        pipe.println("ready");
+        log.display("Waiting for command: " + "quit");
+        String command = pipe.readln();
+        log.display("Received command: " + command);
+        log.display("Debugee PASSED");
+        return invalid001.PASSED;
     }
-
-    @Test
-    void unstartedVirtualhread() {
-        Thread t = Thread.ofVirtual().unstarted(() -> { });
-        assertFalse(ThreadSnapshot.of(t) != null);
-    }
-
-    @Test
-    void terminatedVirtualThread() throws InterruptedException {
-        Thread t = Thread.ofVirtual().start(() -> { });
-        t.join();
-        assertFalse(ThreadSnapshot.of(t) != null);
-    }
-
 }
